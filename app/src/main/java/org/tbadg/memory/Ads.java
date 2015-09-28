@@ -7,11 +7,11 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-public class Ads {
+class Ads {
 
-    public final String TAG = "Ads";
+    private static final String TAG = "Ads";
 
-    AdView mAdView = null;
+    private AdView mAdView = null;
 
 
     //

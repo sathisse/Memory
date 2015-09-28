@@ -10,7 +10,8 @@ import java.util.HashMap;
 
 public class SoundsEffects {
 
-    public static int AUDIO_STREAM_TYPE = AudioManager.STREAM_MUSIC;
+    private static final String TAG = "SoundEffects";
+    public static final int AUDIO_STREAM_TYPE = AudioManager.STREAM_MUSIC;
 
     public enum Type {
         FLIP,
@@ -58,12 +59,12 @@ public class SoundsEffects {
      */
 
 
-    private final int MAX_SIMULTANEOUS_SOUNDS = 3;
+    private static final int MAX_SIMULTANEOUS_SOUNDS = 3;
 
-    private final int NO_LOOP = 0;
-    private final int LOOP_FOREVER = -1;
-    private final float NORMAL_SPEED = 1f;
-    private final int NORMAL_PRIORITY = 1;
+    private static final int NO_LOOP = 0;
+    private static final int LOOP_FOREVER = -1;
+    private static final float NORMAL_SPEED = 1f;
+    private static final int NORMAL_PRIORITY = 1;
 
     private SoundPool mSoundPool;
     private float mActualVolume;
@@ -71,8 +72,8 @@ public class SoundsEffects {
     private float mVolume;
     private AudioManager mAudioManager;
 
-    private HashMap<Type, Integer> mTypeToSoundIdMap = new HashMap<>();
-    private HashMap<Integer, Boolean> mTypeIsLoadedMap = new HashMap<>();
+    private final HashMap<Type, Integer> mTypeToSoundIdMap = new HashMap<>();
+    private final HashMap<Integer, Boolean> mTypeIsLoadedMap = new HashMap<>();
 
     private int soundsLoaded = 0;
     private static boolean resourceLoadingFinished = false;
@@ -99,8 +100,10 @@ public class SoundsEffects {
                 if (++soundsLoaded >= Type.values().length)
                     resourceLoadingFinished = true;
 
-                Log.d("SE", String.format("soundsLoaded=%d, values=%s, Type.values().length= %d, resourceLoadingFinished=%b",
-                                          soundsLoaded, Type.values(), Type.values().length, resourceLoadingFinished));
+                Log.d(TAG, String.format("soundsLoaded=%d, values=%s, Type.values().length= %d," +
+                                         " resourceLoadingFinished=%b",
+                                          soundsLoaded, Type.values().toString(),
+                                          Type.values().length, resourceLoadingFinished));
             }
         });
 

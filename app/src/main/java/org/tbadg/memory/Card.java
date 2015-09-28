@@ -23,17 +23,17 @@ public class Card extends ImageView {
     private static final int CARD_REMOVE_MSECS = 750;
 
     private Integer mValue;
-    private int mImages[] = new int[MemoryActivity.MAX_MATCHES];
+    private final int[] mImages = new int[MemoryActivity.MAX_MATCHES];
     private static boolean resourceLoadingFinished = false;
 
     // Animators used for flipping a card:
-    ValueAnimator mStartFlip = null;
-    ValueAnimator mFinishFlip = null;
-    ValueAnimator mSwapCardImages = null;
+    private ValueAnimator mStartFlip = null;
+    private ValueAnimator mFinishFlip = null;
+    private ValueAnimator mSwapCardImages = null;
     private int mCurrentImage;
 
     // Animator set used for removing a card:
-    AnimatorSet mRemoveCardAnimSet = null;
+    private AnimatorSet mRemoveCardAnimSet = null;
 
 
     public Card(Context context) {
@@ -44,7 +44,7 @@ public class Card extends ImageView {
         setBackgroundResource(R.drawable.card_bg);
     }
 
-    public void setup(Context context) {
+    private void setup(Context context) {
         for (int x = 0; x < mImages.length; x++) {
             mImages[x] = getResources().getIdentifier("@drawable/card_" + String.valueOf(x), null,
                                                       context.getPackageName());
@@ -145,7 +145,7 @@ public class Card extends ImageView {
         flipCardAnim.start();
     }
 
-    public class ResourceIdEvaluator implements TypeEvaluator<Integer> {
+    private class ResourceIdEvaluator implements TypeEvaluator<Integer> {
         @Override
         public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
             // Always return the end value since we only expect to be run once:

@@ -8,7 +8,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
-public class Music {
+class Music {
 
     public void play(Context context, int resourceId) {
         Uri uri = new Uri.Builder()
@@ -19,7 +19,7 @@ public class Music {
         play(context, uri);
     }
 
-    public void play(Context context, Uri musicUri) {
+    private void play(Context context, Uri musicUri) {
         reset();
 
         MediaPlayer mediaPlayer = new MediaPlayer();
@@ -67,7 +67,7 @@ public class Music {
      */
 
     private MediaPlayer mMediaPlayer;
-    private static boolean resourceLoadingFinished = true;
+    private static final boolean resourceLoadingFinished = true;
 
 
     private void reset() {
@@ -84,7 +84,8 @@ public class Music {
         return maxVolume <= 0f ? 0f : actualVolume / maxVolume;
     }
 
-    private MediaPlayer.OnPreparedListener mOnPreparedListener = new MediaPlayer.OnPreparedListener() {
+    private final MediaPlayer.OnPreparedListener mOnPreparedListener
+            = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mp) {
             mMediaPlayer = mp;
@@ -92,7 +93,8 @@ public class Music {
         }
     };
 
-    private MediaPlayer.OnErrorListener mOnErrorListener = new MediaPlayer.OnErrorListener() {
+    private final MediaPlayer.OnErrorListener mOnErrorListener
+            = new MediaPlayer.OnErrorListener() {
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
             Log.e("Music", "onError(): " + what + "  " + extra);
@@ -101,7 +103,8 @@ public class Music {
         }
     };
 
-    private MediaPlayer.OnCompletionListener mOnCompletionListener = new MediaPlayer.OnCompletionListener() {
+    private final MediaPlayer.OnCompletionListener mOnCompletionListener
+            = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
             // as long as we loop the same media source, this should never be called

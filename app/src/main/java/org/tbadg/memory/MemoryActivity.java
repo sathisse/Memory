@@ -271,7 +271,7 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
         }
     };
 
-    class InsertScoreTask extends AsyncTask<ContentValues, Void, Boolean> {
+    private class InsertScoreTask extends AsyncTask<ContentValues, Void, Boolean> {
         @Override
         protected Boolean doInBackground(ContentValues... cv) {
             mDb.getWritableDatabase().insert(DatabaseHelper.TABLE,
