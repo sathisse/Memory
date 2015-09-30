@@ -27,6 +27,7 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
     @SuppressWarnings("unused")
     private static final String TAG = "MemoryActivity";
     public static final int MAX_MATCHES = 24;
+    private static final int WINNER_POPUP_DISPLAY_TIME = 5000;
 
     private Board mBoard;
     private Button mPopupBtn;
@@ -262,16 +263,25 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
     }
 
     private void newGame() {
+        mPopupBtn.removeCallbacks(mNewGameRunnable);
         mBoard.reset();
         mPopupBtn.setVisibility(View.INVISIBLE);
     }
 
+    private final Runnable mNewGameRunnable = new Runnable() {
+        @Override
+        public void run() {
+            newGame();
+        }
+    };
+
     private final Runnable mOnWinnerRunnable = new Runnable() {
         @Override
         public void run() {
+            mPopupBtn.postDelayed(mNewGameRunnable, WINNER_POPUP_DISPLAY_TIME);
+
             ContentValues cv = mBoard.getResult();
-            mPopupBtn.setText(getString(R.string.winner_popup)
-                    + cv.get(DatabaseHelper.SCORE));
+            mPopupBtn.setText(getString(R.string.winner_popup) + cv.get(DatabaseHelper.SCORE));
             mPopupBtn.setVisibility(View.VISIBLE);
 
             new InsertScoreTask().execute(cv);
@@ -284,7 +294,7 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
             mDb.getWritableDatabase().insert(DatabaseHelper.TABLE,
                     DatabaseHelper.SCORE, cv[0]);
 
-            Log.e(TAG, "Inserted score row into datbase.");
+            Log.d(TAG, "Inserted score row into datbase.");
             return true;
         }
     }
@@ -315,6 +325,7 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
                 msecs += DELAY_MSECS;
             }
 
+            Log.e(TAG, "Resource loading timed-out!");
             return false;
         }
 
