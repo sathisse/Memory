@@ -1,5 +1,7 @@
 package org.tbadg.memory;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
@@ -72,6 +74,12 @@ public class Card extends ImageView {
         mRemoveCardAnimSet.setDuration(CARD_REMOVE_MSECS);
         mRemoveCardAnimSet.setInterpolator(new AccelerateDecelerateInterpolator());
         mRemoveCardAnimSet.play(removeCardX).with(removeCardY);
+        mRemoveCardAnimSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Card.this.setVisibility(INVISIBLE);
+            }
+        });
 
         resourceLoadingFinished = true;
     }
@@ -103,6 +111,7 @@ public class Card extends ImageView {
         setImageResource(R.drawable.card_back);
     }
 
+    @SuppressWarnings("unused")
     public void showFront() {
         setScaleX(1f);
         setScaleY(1f);
