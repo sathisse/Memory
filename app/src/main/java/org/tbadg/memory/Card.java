@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.Log;
@@ -28,10 +27,8 @@ public class Card extends ImageView {
     private final int[] mImages = new int[MemoryActivity.MAX_MATCHES];
     private static boolean resourceLoadingFinished = false;
 
-    // Animators used for flipping a card:
-    private ValueAnimator mStartFlip = null;
-    private ValueAnimator mFinishFlip = null;
-    private ValueAnimator mSwapCardImages = null;
+    // Animator set used for flipping a card:
+    private AnimatorSet mFlipCardAnimSet = null;
     private int mCurrentImage;
 
     // Animator set used for removing a card:
@@ -54,16 +51,28 @@ public class Card extends ImageView {
 
         // Create animator used to start flipping a card. At the end of this, the card has
         //   been rotated halfway, showing it's edge, making the current card image disappear:
-        mStartFlip = ObjectAnimator.ofFloat(this, "rotationY", 0, HALF_CARD_FLIP_DEGREES);
+        ValueAnimator mStartFlip = ObjectAnimator.ofFloat(this, "rotationY", 0,
+                                                          HALF_CARD_FLIP_DEGREES);
         mStartFlip.setDuration(HALF_CARD_FLIP_MSECS);
         mStartFlip.setInterpolator(new AccelerateInterpolator());
+        mStartFlip.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                // Change the card image when the card is half-flipped:
+                Card.this.setImageResource(mCurrentImage);
+            }
+        });
 
-        // Create animator used to finish flipping a card. At the start, the card edge appears
-        //   to be facing the user. Then the new card image is rotated into view until it is fully
-        //   displayed.
-        mFinishFlip = ObjectAnimator.ofFloat(this, "rotationY", -HALF_CARD_FLIP_DEGREES, 0);
+        // Create animator used to finish flipping a card. At the start, the card edge is facing
+        //   the user. The new image is then rotated into view until it is fully displayed:
+        ValueAnimator mFinishFlip = ObjectAnimator.ofFloat(this, "rotationY",
+                                                           -HALF_CARD_FLIP_DEGREES, 0);
         mFinishFlip.setDuration(HALF_CARD_FLIP_MSECS);
         mFinishFlip.setInterpolator(new DecelerateInterpolator());
+
+        // Create an Animator set with the sequence: mStartFlip, mFinishFlip:
+        mFlipCardAnimSet = new AnimatorSet();
+        mFlipCardAnimSet.play(mStartFlip).before(mFinishFlip);
 
         // Create animators to remove a card by shrinking it to nothing:
         ValueAnimator removeCardX = ObjectAnimator.ofFloat(this, "scaleX", 1f, 0f);
@@ -139,26 +148,7 @@ public class Card extends ImageView {
     }
 
     private void flipCard(int image) {
-        // Create a regressive "animator" that merely swaps the front-back card mImages:
-        mSwapCardImages = ObjectAnimator.ofObject(this, "imageResource",
-                                                  new ResourceIdEvaluator(), mCurrentImage, image);
-
-        // Duration 0 seems to work fine to get a single frame, but might need to be a '1':
-        mSwapCardImages.setDuration(0);
         mCurrentImage = image;
-
-        // Create and mStartFlip an Animator set with the sequence: mStartFlip, mSwapCardImages, mFinishFlip:
-        AnimatorSet flipCardAnim = new AnimatorSet();
-        flipCardAnim.play(mStartFlip).before(mSwapCardImages);
-        flipCardAnim.play(mFinishFlip).after(mSwapCardImages);
-        flipCardAnim.start();
-    }
-
-    private class ResourceIdEvaluator implements TypeEvaluator<Integer> {
-        @Override
-        public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
-            // Always return the end value since we only expect to be run once:
-            return endValue;
-        }
+        mFlipCardAnimSet.start();
     }
 }
