@@ -150,6 +150,7 @@ public class Board extends LinearLayout {
             }
         }
 
+        Card.loadCardImages(getContext());
         mSoundsEffects.play(SoundsEffects.Type.START);
     }
 
@@ -233,6 +234,8 @@ public class Board extends LinearLayout {
     private void doWin() {
         postDelayed(showWin, WINNER_NOTIFICATION_DELAY_IN_MILLIS);
     }
+
+
     //
     // Listeners and runnables:
     //

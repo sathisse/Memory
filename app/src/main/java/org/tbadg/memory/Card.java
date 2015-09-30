@@ -13,6 +13,9 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 
 public class Card extends ImageView {
     public static final int CARD_FLIP_MSECS = 750;
@@ -24,7 +27,7 @@ public class Card extends ImageView {
     private static final int CARD_REMOVE_MSECS = 750;
 
     private Integer mValue;
-    private final int[] mImages = new int[MemoryActivity.MAX_MATCHES];
+    private final static ArrayList<Integer> sImages = new ArrayList<>();
     private static boolean resourceLoadingFinished = false;
 
     // Animator set used for flipping a card:
@@ -37,25 +40,31 @@ public class Card extends ImageView {
 
     public Card(Context context) {
         super(context);
-        setup(context);
+        setup();
 
         setScaleType(ScaleType.FIT_CENTER);
         setBackgroundResource(R.drawable.card_bg);
     }
 
-    private void setup(Context context) {
-        for (int x = 0; x < mImages.length; x++) {
-            mImages[x] = getResources().getIdentifier("@drawable/card_" + String.valueOf(x), null,
-                                                      context.getPackageName());
-        }
+    public static void loadCardImages(Context context) {
+        sImages.clear();
 
+        for (int x = 0; x < MemoryActivity.MAX_MATCHES; x++)
+            sImages.add(context.getResources().getIdentifier("@drawable/card_" + String.valueOf(x),
+                                                             null, context.getPackageName()));
+        Collections.shuffle(sImages);
+
+        resourceLoadingFinished = true;
+    }
+
+    private void setup() {
         // Create animator used to start flipping a card. At the end of this, the card has
         //   been rotated halfway, showing it's edge, making the current card image disappear:
-        ValueAnimator mStartFlip = ObjectAnimator.ofFloat(this, "rotationY", 0,
-                                                          HALF_CARD_FLIP_DEGREES);
-        mStartFlip.setDuration(HALF_CARD_FLIP_MSECS);
-        mStartFlip.setInterpolator(new AccelerateInterpolator());
-        mStartFlip.addListener(new AnimatorListenerAdapter() {
+        ValueAnimator startFlip = ObjectAnimator.ofFloat(this, "rotationY", 0,
+                                                         HALF_CARD_FLIP_DEGREES);
+        startFlip.setDuration(HALF_CARD_FLIP_MSECS);
+        startFlip.setInterpolator(new AccelerateInterpolator());
+        startFlip.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 // Change the card image when the card is half-flipped:
@@ -65,14 +74,14 @@ public class Card extends ImageView {
 
         // Create animator used to finish flipping a card. At the start, the card edge is facing
         //   the user. The new image is then rotated into view until it is fully displayed:
-        ValueAnimator mFinishFlip = ObjectAnimator.ofFloat(this, "rotationY",
-                                                           -HALF_CARD_FLIP_DEGREES, 0);
-        mFinishFlip.setDuration(HALF_CARD_FLIP_MSECS);
-        mFinishFlip.setInterpolator(new DecelerateInterpolator());
+        ValueAnimator finishFlip = ObjectAnimator.ofFloat(this, "rotationY",
+                                                          -HALF_CARD_FLIP_DEGREES, 0);
+        finishFlip.setDuration(HALF_CARD_FLIP_MSECS);
+        finishFlip.setInterpolator(new DecelerateInterpolator());
 
         // Create an Animator set with the sequence: mStartFlip, mFinishFlip:
         mFlipCardAnimSet = new AnimatorSet();
-        mFlipCardAnimSet.play(mStartFlip).before(mFinishFlip);
+        mFlipCardAnimSet.play(startFlip).before(finishFlip);
 
         // Create animators to remove a card by shrinking it to nothing:
         ValueAnimator removeCardX = ObjectAnimator.ofFloat(this, "scaleX", 1f, 0f);
@@ -89,8 +98,6 @@ public class Card extends ImageView {
                 Card.this.setVisibility(INVISIBLE);
             }
         });
-
-        resourceLoadingFinished = true;
     }
 
 
@@ -126,7 +133,7 @@ public class Card extends ImageView {
         setScaleY(1f);
         setVisibility(View.VISIBLE);
         Log.d(TAG, "Resource ID = " + mValue);
-        setImageResource(mImages[mValue]);
+        setImageResource(sImages.get(mValue));
     }
 
     public boolean equals(Card other) {
@@ -144,7 +151,7 @@ public class Card extends ImageView {
 
     public void flipToFront() {
         Log.d(TAG, String.format("Flipping card %d to front", mValue));
-        flipCard(mImages[mValue]);
+        flipCard(sImages.get(mValue));
     }
 
     private void flipCard(int image) {
