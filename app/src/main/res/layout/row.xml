@@ -20,20 +20,12 @@
         android:text="@string/score" />
 
     <TextView
-        android:id="@+id/matches"
+        android:id="@+id/cards"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_weight="1"
-        android:text="@string/matches" />
-
-    <TextView
-        android:id="@+id/guesses"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_weight="1"
-        android:text="@string/guesses" />
+        android:text="@string/cards" />
 
     <TextView
         android:id="@+id/time"

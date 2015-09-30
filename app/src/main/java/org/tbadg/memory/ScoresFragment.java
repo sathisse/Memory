@@ -20,6 +20,8 @@ import android.widget.TextView;
 public class ScoresFragment extends ListFragment {
 
     private static final String TAG = "ScoresFragment";
+    private static final String SCORES_TO_DISPLAY = "5";
+
 
 
     @Override
@@ -31,8 +33,8 @@ public class ScoresFragment extends ListFragment {
 
         ScoresCursorAdapter mAdapter = new ScoresCursorAdapter(getActivity(), R.layout.row, null,
                 new String[] { DatabaseHelper.SCORE, DatabaseHelper.MATCHES,
-                               DatabaseHelper.GUESSES, DatabaseHelper.ELAPSED_TIME},
-                new int[] {R.id.score, R.id.matches, R.id.guesses, R.id.time}, 0);
+                               DatabaseHelper.ELAPSED_TIME},
+                new int[] {R.id.score, R.id.cards, R.id.time}, 0);
 
         setListAdapter(mAdapter);
         new LoadCursorTask().execute();
@@ -59,6 +61,9 @@ public class ScoresFragment extends ListFragment {
             TextView rankVw = (TextView) view.findViewById(R.id.rank);
             rankVw.setText(String.valueOf(position + 1));
 
+            TextView cardsVw = (TextView) view.findViewById(R.id.cards);
+            cardsVw.setText(String.valueOf(Integer.valueOf(cardsVw.getText().toString()) * 2));
+
             TextView timeVw = (TextView) view.findViewById(R.id.time);
             int time = Integer.valueOf(timeVw.getText().toString());
             timeVw.setText(String.format("%02d:%02d", time / 60, time % 60));
@@ -84,8 +89,9 @@ public class ScoresFragment extends ListFragment {
                     .query(DatabaseHelper.TABLE,
                             new String[]{ "ROWID AS _id",
                                           DatabaseHelper.SCORE, DatabaseHelper.MATCHES,
-                                          DatabaseHelper.GUESSES, DatabaseHelper.ELAPSED_TIME},
-                            null, null, null, null, DatabaseHelper.SCORE + " desc", "8");
+                                          DatabaseHelper.ELAPSED_TIME},
+                            null, null, null, null, DatabaseHelper.SCORE + " desc",
+                            SCORES_TO_DISPLAY);
         }
 
         @Override

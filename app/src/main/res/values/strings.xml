@@ -5,7 +5,7 @@
 
     <string name="menu_new">New Game</string>
     <string name="menu_matches">Matches:</string>
-    <string name="menu_score">Best Scores</string>
+    <string name="menu_score">Show Best Scores</string>
     <string name="menu_about">Show About</string>
     <string name="menu_help">Show Help</string>
 
@@ -17,11 +17,10 @@
 
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 
-    <string name="best_score">Show Best Scores</string>
+    <string name="best_score">Best Scores</string>
     <string name="rank">Rank</string>
     <string name="score">Score</string>
-    <string name="matches">Matches</string>
-    <string name="guesses">Guesses</string>
+    <string name="cards">Cards</string>
     <string name="time">Time</string>
 
     <string name="splash_image">Splash Image</string>
