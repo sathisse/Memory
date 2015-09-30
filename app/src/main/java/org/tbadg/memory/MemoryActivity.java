@@ -2,6 +2,8 @@ package org.tbadg.memory;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -200,12 +202,17 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
 
         Log.e(TAG, "Showing best scores.");
 
-            mScores = new ScoresFragment();
-            if (getFragmentManager().findFragmentById(android.R.id.content) == null) {
-                getFragmentManager().beginTransaction().add(android.R.id.content,mScores).commit();
-            } else {
-                getFragmentManager().beginTransaction().replace(android.R.id.content,mScores).commit();
-            }
+        mScores = new ScoresFragment();
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+
+        if (fm.findFragmentById(android.R.id.content) == null) {
+            ft.add(android.R.id.content, mScores);
+        } else {
+            ft.replace(android.R.id.content, mScores);
+        }
+
+        ft.addToBackStack("BestScores").commit();
     }
 
     public void dismissScores(View vw) {
