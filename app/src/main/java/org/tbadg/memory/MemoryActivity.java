@@ -38,6 +38,7 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
     private Music mMusic;
 
     private int mPrevOrientation = -1;
+    private Ads mAds = null;
     private DatabaseHelper mDb = null;
 
     private ScoresFragment mScores = null;
@@ -51,6 +52,9 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
         setContentView(R.layout.activity_memory);
 
         mDb = new DatabaseHelper(this);
+
+        mAds = new Ads(findViewById(R.id.adView));
+        mAds.showAd();
 
         setVolumeControlStream(SoundsEffects.AUDIO_STREAM_TYPE);
         mSoundsEffects = new SoundsEffects(this);
