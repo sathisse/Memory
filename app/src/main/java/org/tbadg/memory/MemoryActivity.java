@@ -75,12 +75,16 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
     @Override
     protected void onResume() {
         super.onResume();
+        if (mAds != null)
+            mAds.resume();
         mMusic.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (mAds != null)
+            mAds.pause();
         mMusic.pause();
     }
 
@@ -95,6 +99,9 @@ public class MemoryActivity extends Activity implements TextView.OnEditorActionL
         super.onDestroy();
 
         mDb.close();
+
+        if (mAds != null)
+            mAds.destroy();
     }
 
     @Override
